@@ -1,0 +1,84 @@
+body {
+  text-align: center;
+  color: LightCyan;
+  font-family: 'Montserrat',"sans-serif";
+  /********* Canvas*************/
+  background: url(../img/bg2.jpg) no-repeat center center fixed;
+  -webkit-background-size: 100%;
+  -moz-background-size: 100%;
+  -o-background-size: 100%;
+  background-size: 100%;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover; }
+
+.header {
+  font-size: 16px;
+  color: green;
+  padding: 10px; }
+  .header button {
+    margin: 10px; }
+
+.table {
+  color: #eeeeee;
+  font-size: 12px;
+  margin: 1em;
+  display: flex;
+  flex-direction: column;
+  margin-top: 2em; }
+  .table .header, .table .row, .table .footer {
+    display: flex; }
+    .table .header div, .table .row div, .table .footer div {
+      flex: 1;
+      padding: 0.2rem 0.4em; }
+  .table .header {
+    background-color: #eeeeee;
+    border-radius: 10px 10px 0 0; }
+    .table .header div {
+      cursor: pointer; }
+  .table .body {
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: black;
+    border-radius: 0 0 10px 10px; }
+  .table .footer {
+    margin: 0 10px; }
+
+.pagination div, .showXrow div {
+  cursor: pointer; }
+
+.pagin {
+  height: 20px;
+  padding: 8px;
+  font-size: 12px;
+  border: 1px solid gray;
+  -webkit-box-shadow: 6px 6px 40px 3px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 6px 6px 40px 3px rgba(0, 0, 0, 0.75);
+  box-shadow: 6px 6px 40px 3px rgba(0, 0, 0, 0.75);
+  display: inline-block;
+  margin: 0;
+  line-height: 1; }
+
+.showXrow {
+  text-align: right; }
+
+.showfive:nth-child(n+6) {
+  display: none; }
+
+.showten:nth-child(n+11) {
+  display: none; }
+
+.showtwen:nth-child(n+21) {
+  display: none; }
+
+.List1:nth-child(n+21) {
+  display: none; }
+
+.ChoiceItem form label {
+  font-weight: bold; }
+
+.ChoiceItem form h1 {
+  font-size: 26px;
+  padding: 1em; }

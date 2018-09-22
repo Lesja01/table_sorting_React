@@ -18129,29 +18129,59 @@ var InitialState = {
         date: "2001"
     }, {
         id: 10,
-        singer: "Nirvana",
+        singer: "Abba",
         song_name: 'Never',
         genre: 'Rock',
         temp: false,
         date: "2005"
     }, {
         id: 11,
-        singer: "Nirvana",
+        singer: "Abba",
         song_name: 'Mind',
         genre: 'Rock',
         temp: false,
         date: "1998"
     }, {
         id: 12,
-        singer: "Nirvana",
+        singer: "Nicol",
         song_name: 'clo',
         genre: 'Rock',
         temp: false,
-        date: "1997"
+        date: "1993"
+    }, {
+        id: 13,
+        singer: "Parad",
+        song_name: 'No',
+        genre: 'Rock',
+        temp: false,
+        date: "2003"
+    }, {
+        id: 14,
+        singer: "Mozart",
+        song_name: 'Poem',
+        genre: 'Classik',
+        temp: false,
+        date: "1992"
+    }, {
+        id: 15,
+        singer: "Nirvana",
+        song_name: 'The best',
+        genre: 'Rock',
+        temp: false,
+        date: "2000"
+    }, {
+        id: 16,
+        singer: "Nirvana",
+        song_name: 'Gold',
+        genre: 'Rock',
+        temp: false,
+        date: "1996"
     }],
 
     showRows: 0,
-    showLetter: 0
+    showLetter: 0,
+    exampleItems: 0,
+    pageOfItems: 0
 
 };
 
@@ -18203,7 +18233,7 @@ var Row = function Row(_ref) {
         date = _ref.date;
     return _react2.default.createElement(
         "div",
-        { id: "showRows", key: id, className: ClassName1 + " " + ClassName2 + " " + "row" },
+        { id: "showRows", key: id, className: ClassName1 + " " + "row" },
         _react2.default.createElement(
             "div",
             { key: id },
@@ -18228,7 +18258,6 @@ var Row = function Row(_ref) {
 };
 
 var ClassName1 = "";
-var ClassName2 = "";
 
 var App = function (_React$Component) {
     _inherits(App, _React$Component);
@@ -18250,7 +18279,8 @@ var App = function (_React$Component) {
 
         return _this;
     }
-    // сортировкa
+
+    // сортировкa по алфавиту таблицы
 
 
     _createClass(App, [{
@@ -18275,12 +18305,7 @@ var App = function (_React$Component) {
             ClassName1 = key;
             this.setState({ showRows: ClassName1 });
         }
-    }, {
-        key: "showList",
-        value: function showList(key) {
-            ClassName2 = key;
-            this.setState({ showLetter: ClassName2 });
-        }
+
         // фильтрация
 
     }, {
@@ -18317,12 +18342,13 @@ var App = function (_React$Component) {
         value: function render() {
             var _this2 = this;
 
+            //create  sorting table
             var rows = this.state.data.map(function (rowData) {
                 if (rowData.temp == false) {
                     return _react2.default.createElement(Row, rowData);
                 };
             });
-
+            //coздаем массивы выпадающих из фильтра полей
             var singers = createNewMas(this.state.data.map(function (item, i) {
                 return item.singer;
             }));
@@ -18333,15 +18359,11 @@ var App = function (_React$Component) {
                 return item.date;
             }));
 
-            //create  sorting table
-
+            //сортируем и удалем повторы 
             function createNewMas(oldMas) {
-                function sortmas(mas) {
-                    return mas.sort().filter(function (item, pos, ary) {
-                        return !pos || item != ary[pos - 1];
-                    });
-                };
-                return sortmas(oldMas);
+                return oldMas.sort().filter(function (item, pos, ary) {
+                    return !pos || item != ary[pos - 1];
+                });
             };
 
             function kreateList(mas) {
@@ -18353,6 +18375,8 @@ var App = function (_React$Component) {
                     );
                 });
             };
+            //отсортированные массивы выпадающих из фильтра полей   
+
             var singer = kreateList(singers);
             var genre = kreateList(genres);
             var date = kreateList(dates);
@@ -18463,6 +18487,13 @@ var App = function (_React$Component) {
                                 _react2.default.createElement(
                                     "div",
                                     { className: "showXrow col-md-5" },
+                                    _react2.default.createElement(
+                                        "div",
+                                        { className: "pagin", onClick: function onClick() {
+                                                return _this2.showXrow("");
+                                            } },
+                                        "\u0432\u0441\u0435"
+                                    ),
                                     _react2.default.createElement(
                                         "div",
                                         { className: "pagin", onClick: function onClick() {

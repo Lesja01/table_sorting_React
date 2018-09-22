@@ -76,7 +76,7 @@ const InitialState = {
             },
             {
                 id              : 10,
-                singer: "Nirvana",
+                singer: "Abba",
                 song_name        :'Never',
                 genre       :'Rock',
                 temp            : false,
@@ -84,7 +84,7 @@ const InitialState = {
             },
             {
                 id              : 11,
-                singer: "Nirvana",
+                singer: "Abba",
                 song_name        :'Mind',
                 genre       :'Rock',
                 temp            : false,
@@ -92,16 +92,50 @@ const InitialState = {
             },
             {
                 id              : 12,
-                singer: "Nirvana",
+                singer: "Nicol",
                 song_name        :'clo',
                 genre       :'Rock',
                 temp            : false,
-                date            : "1997"
+                date            : "1993"
+            },
+            {
+                id              : 13,
+                singer: "Parad",
+                song_name        :'No',
+                genre       :'Rock',
+                temp            : false,
+                date            : "2003"
+            },
+            {
+                id              : 14,
+                singer: "Mozart",
+                song_name        :'Poem',
+                genre       :'Classik',
+                temp            : false,
+                date            : "1992"
+            },
+            {
+                id              : 15,
+                singer: "Nirvana",
+                song_name        :'The best',
+                genre       :'Rock',
+                temp            : false,
+                date            : "2000"
+            },
+            {
+                id              : 16,
+                singer: "Nirvana",
+                song_name        :'Gold',
+                genre       :'Rock',
+                temp            : false,
+                date            : "1996"
             }
         ],
         
         showRows: 0,
-        showLetter: 0
+        showLetter: 0,
+        exampleItems: 0,
+        pageOfItems: 0
     
 };
 

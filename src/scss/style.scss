@@ -68,12 +68,12 @@ body{
 
   // ВЫБОР КОЛИЧЕСТВА СТРОК
 .pagination, .showXrow{
-  div { 
+  div,li { 
     cursor: pointer;
   }
 }  
 .pagin{
-  height: 20px;
+  height: 25px;
   padding: 8px;
   font-size: 12px;
   border: 1px solid gray;
@@ -83,7 +83,21 @@ body{
   display: inline-block;
   margin: 0;
   line-height: 1;   
-}  
+} 
+.pagination{
+  li{
+  height: 25px;
+  padding: 8px;
+  font-size: 12px;
+  border: 1px solid gray;
+  -webkit-box-shadow: 6px 6px 40px 3px rgba(0,0,0,0.75);
+  -moz-box-shadow: 6px 6px 40px 3px rgba(0,0,0,0.75);
+  box-shadow: 6px 6px 40px 3px rgba(0,0,0,0.75);   
+  display: inline-block;
+  margin: 0;
+  line-height: 1;   
+  }
+} 
 .showXrow{
   text-align: right;
 }

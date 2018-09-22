@@ -7,7 +7,7 @@ let Store = Initialstate;//хранилище начальных данных
 
 //create row for table
 const Row = ({id, singer, song_name, genre, date}) => (
-  <div id="showRows" key={id} className={ClassName1+" "+ClassName2+" "+"row"} >    
+  <div id="showRows" key={id} className={ClassName1+" "+"row"} >    
     <div key={id}>{singer}</div>
     <div>{song_name}</div>
     <div>{genre}</div>    
@@ -16,11 +16,12 @@ const Row = ({id, singer, song_name, genre, date}) => (
 );
 
 let ClassName1 = "";
-let ClassName2 = "";
+
 
 
 
 export default class App extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -34,7 +35,8 @@ export default class App extends React.Component {
     this.choiceItem.bind(this);
 
   }
-  // сортировкa
+
+  // сортировкa по алфавиту таблицы
   compareBy(key) {
     return function (a, b) {
       if (a[key] < b[key]) return -1;
@@ -54,24 +56,20 @@ export default class App extends React.Component {
     this.setState({showRows: ClassName1}); 
   }
 
-  showList(key){
-    ClassName2 = key; 
-    this.setState({showLetter: ClassName2});    
-  }
 // фильтрация
     choiceItem(choiseGoodTipe) { 
-           	//записываем переменные значений ссылок
-    	    var rsinger = this.refs.singer.value;
+            //записываем переменные значений ссылок
+            var rsinger = this.refs.singer.value;
             var rgenre = this.refs.genre.value; 
             var rdate = this.refs.date.value;  
-    	    let arrayCopy = [...this.state.data];
+            let arrayCopy = [...this.state.data];
 
             //создаем фильтр состояния по условиям, меняем видимость элементов
-    	let ItemTemplate = arrayCopy.filter(function(elem, index) {  
-	    	
-			      if (choiseGoodTipe=="singer"&&(rsinger==elem.singer||rsinger=="все") )
+        let ItemTemplate = arrayCopy.filter(function(elem, index) {  
+            
+                  if (choiseGoodTipe=="singer"&&(rsinger==elem.singer||rsinger=="все") )
                   { 
-			      	elem.temp=false;
+                    elem.temp=false;
                     return elem
                     }
                 else if (choiseGoodTipe=="genre"&&(elem.genre==rgenre||rgenre=="все") )
@@ -86,23 +84,23 @@ export default class App extends React.Component {
                     }
                     else
                         {
-        	                elem.temp=true;
-        	                return elem
+                            elem.temp=true;
+                            return elem
                         }
-			    }); 
-			 //обновляем состояние
-        	this.setState({data: ItemTemplate});   
+                }); 
+             //обновляем состояние
+            this.setState({data: ItemTemplate});   
     }
 
 
   render() {    
-
+//create  sorting table
         const rows = this.state.data.map( (rowData) =>{
                                      if (rowData.temp==false){
                                         return (
                                         <Row {...rowData} />)};
             });
-
+//coздаем массивы выпадающих из фильтра полей
         var singers = createNewMas(this.state.data.map((item, i) =>{ 
                 return  item.singer;
             })); 
@@ -112,17 +110,13 @@ export default class App extends React.Component {
         var dates = createNewMas(this.state.data.map((item, i) =>{ 
                 return  item.date;
             
-         })); 
-    
-//create  sorting table
+         }));    
 
-        function createNewMas(oldMas) {
-            function sortmas(mas){ 
-                return mas.sort().filter(function(item, pos, ary) {
+    //сортируем и удалем повторы 
+        function createNewMas(oldMas) {       
+                return oldMas.sort().filter(function(item, pos, ary) {
                     return !pos || item != ary[pos - 1];        
-                    })    
-                };
-            return sortmas(oldMas);
+                    })  
             };       
 
         function kreateList(mas) { 
@@ -133,7 +127,9 @@ export default class App extends React.Component {
                         </option>
                    )
             }
-        )} ;            
+        )} ;   
+    //отсортированные массивы выпадающих из фильтра полей   
+
         let singer = kreateList(singers);
         let genre = kreateList(genres); 
         let date = kreateList(dates);   
@@ -141,21 +137,21 @@ export default class App extends React.Component {
 
     return (
       <div>
-      	     <Header/>
+             <Header/>
 
              <div className="container-fluid">
                 <div className="row">
-    		      <div className="table col-md-8">
+                  <div className="table col-md-8">
                  
-    		        <div className="header">          
-    		          <div onClick={() => this.sortBy('singer')}>Исполнитель  <i className="fa fa-caret-down" aria-hidden="true"></i></div>
-    		          <div onClick={() => this.sortBy('song_name')}>Песня  <i className="fa fa-caret-down" aria-hidden="true"></i></div>
-    		          <div onClick={() => this.sortBy('genre')}>Жанр  <i className="fa fa-caret-down" aria-hidden="true"></i></div>
-    		          <div onClick={() => this.sortBy('date')}>Год  <i className="fa fa-caret-down" aria-hidden="true"></i></div>
-    		        </div>
-    		        <div className="body navbar-dark bg-dark showStyle">
-    		          {rows}
-    		        </div>
+                    <div className="header">          
+                      <div onClick={() => this.sortBy('singer')}>Исполнитель  <i className="fa fa-caret-down" aria-hidden="true"></i></div>
+                      <div onClick={() => this.sortBy('song_name')}>Песня  <i className="fa fa-caret-down" aria-hidden="true"></i></div>
+                      <div onClick={() => this.sortBy('genre')}>Жанр  <i className="fa fa-caret-down" aria-hidden="true"></i></div>
+                      <div onClick={() => this.sortBy('date')}>Год  <i className="fa fa-caret-down" aria-hidden="true"></i></div>
+                    </div>
+                    <div className="body navbar-dark bg-dark showStyle">
+                      {rows}
+                    </div>
                     <div className="footer row">                        
                         <div className="pagination col-md-7">                   
                           <div className="pagin" onClick={()=>this.showList("prev")}>prev</div>
@@ -167,6 +163,7 @@ export default class App extends React.Component {
                         </div>
 
                         <div className="showXrow col-md-5"> 
+                           <div className="pagin" onClick={()=>this.showXrow("")}>все</div> 
                           <div className="pagin" onClick={()=>this.showXrow("showfive")}>5</div>
                           <div className="pagin" onClick={()=>this.showXrow("showten")}>10</div>
                           <div className="pagin" onClick={()=>this.showXrow("showtwen")}>20</div>                  
@@ -199,14 +196,12 @@ export default class App extends React.Component {
                                     </select>
                                 </div>                        
                             </form>               
-                        </div>
-                       
+                        </div>                       
                 </div>
-		      </div>  
+              </div>  
       </div>
     );
     
   }
 };
-
 

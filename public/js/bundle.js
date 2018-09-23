@@ -18064,7 +18064,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 var InitialState = {
 
-    date: [{
+    data: [{
         id: 1,
         singer: "The Kingston Trio",
         song_name: 'Tom Dooley',
@@ -18096,7 +18096,7 @@ var InitialState = {
         id: 5,
         singer: "Miles Davis",
         song_name: 'Blue in Green',
-        genre: ' Jazz',
+        genre: 'Jazz',
         temp: false,
         date: "1959"
     }, {
@@ -18144,7 +18144,7 @@ var InitialState = {
     }, {
         id: 12,
         singer: "Nicol",
-        song_name: 'clo',
+        song_name: 'Clo',
         genre: 'Rock',
         temp: false,
         date: "1993"
@@ -18158,7 +18158,7 @@ var InitialState = {
     }, {
         id: 14,
         singer: "Mozart",
-        song_name: 'Poem',
+        song_name: 'Poema',
         genre: 'Classik',
         temp: false,
         date: "1992"
@@ -18176,12 +18176,42 @@ var InitialState = {
         genre: 'Rock',
         temp: false,
         date: "1996"
-    }],
-
-    showRows: 0,
-    showLetter: 0,
-    exampleItems: 0,
-    pageOfItems: 0
+    }, {
+        id: 17,
+        singer: "Nicol",
+        song_name: 'Jenifer',
+        genre: 'Rock',
+        temp: false,
+        date: "1993"
+    }, {
+        id: 18,
+        singer: "Ver",
+        song_name: 'No',
+        genre: 'Jazz',
+        temp: false,
+        date: "2003"
+    }, {
+        id: 19,
+        singer: "Bah",
+        song_name: 'Five',
+        genre: 'Classik',
+        temp: false,
+        date: "1990"
+    }, {
+        id: 20,
+        singer: "Pol Mac",
+        song_name: 'Green',
+        genre: 'Rock',
+        temp: false,
+        date: "2000"
+    }, {
+        id: 21,
+        singer: "Nirvana",
+        song_name: 'Grey',
+        genre: 'Rock',
+        temp: false,
+        date: "1996"
+    }]
 
 };
 
@@ -18212,6 +18242,10 @@ var _header = require("./header");
 
 var _header2 = _interopRequireDefault(_header);
 
+var _Pagination = require("./Pagination");
+
+var _Pagination2 = _interopRequireDefault(_Pagination);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
@@ -18224,41 +18258,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var Store = _Initialstate2.default; //хранилище начальных данных
 
-//create row for table
-var Row = function Row(_ref) {
-    var id = _ref.id,
-        singer = _ref.singer,
-        song_name = _ref.song_name,
-        genre = _ref.genre,
-        date = _ref.date;
-    return _react2.default.createElement(
-        "div",
-        { id: "showRows", key: id, className: ClassName1 + " " + "row" },
-        _react2.default.createElement(
-            "div",
-            { key: id },
-            singer
-        ),
-        _react2.default.createElement(
-            "div",
-            null,
-            song_name
-        ),
-        _react2.default.createElement(
-            "div",
-            null,
-            genre
-        ),
-        _react2.default.createElement(
-            "div",
-            null,
-            date
-        )
-    );
-};
-
-var ClassName1 = "";
-
 var App = function (_React$Component) {
     _inherits(App, _React$Component);
 
@@ -18268,22 +18267,32 @@ var App = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
         _this.state = {
-            data: Store.date,
-            showRows: 0,
-            showLetter: 0
+            data: Store.data,
+            showRows: 10,
+            initialstate: Store.data,
+            exampleItems: Store.data,
+            pageOfItems: []
+
         };
 
         _this.compareBy.bind(_this);
         _this.sortBy.bind(_this);
         _this.choiceItem.bind(_this);
+        _this.onChangePage = _this.onChangePage.bind(_this);
 
         return _this;
     }
 
-    // сортировкa по алфавиту таблицы
-
-
     _createClass(App, [{
+        key: "onChangePage",
+        value: function onChangePage(pageOfItems) {
+            // update state with new page of items
+            this.setState({ pageOfItems: pageOfItems });
+        }
+
+        // сортировкa по алфавиту таблицы
+
+    }, {
         key: "compareBy",
         value: function compareBy(key) {
             return function (a, b) {
@@ -18302,11 +18311,14 @@ var App = function (_React$Component) {
     }, {
         key: "showXrow",
         value: function showXrow(key) {
-            ClassName1 = key;
-            this.setState({ showRows: ClassName1 });
+            var Class = key;
+            this.setState({ showRows: Class });
+            //обновляем состояние таблицы    
+            var data = [].concat(_toConsumableArray(this.state.data));
+            this.setState({ data: data });
         }
 
-        // фильтрация
+        // фильтрация таблицы:
 
     }, {
         key: "choiceItem",
@@ -18315,26 +18327,22 @@ var App = function (_React$Component) {
             var rsinger = this.refs.singer.value;
             var rgenre = this.refs.genre.value;
             var rdate = this.refs.date.value;
-            var arrayCopy = [].concat(_toConsumableArray(this.state.data));
+            var arrayCopy = this.state.initialstate;
 
-            //создаем фильтр состояния по условиям, меняем видимость элементов
+            //создаем фильтр состояния по условиям
             var ItemTemplate = arrayCopy.filter(function (elem, index) {
 
-                if (choiseGoodTipe == "singer" && (rsinger == elem.singer || rsinger == "все")) {
-                    elem.temp = false;
+                if (choiseGoodTipe == "singer" && (elem.singer == rsinger || rsinger == "все")) {
                     return elem;
                 } else if (choiseGoodTipe == "genre" && (elem.genre == rgenre || rgenre == "все")) {
-                    elem.temp = false;
                     return elem;
-                } else if (choiseGoodTipe == "date" && (elem.singer == rdate || rdate == "все")) {
-                    elem.temp = false;
+                } else if (choiseGoodTipe == "date" && (elem.date == rdate || rdate == "все")) {
                     return elem;
                 } else {
-                    elem.temp = true;
-                    return elem;
+                    return;
                 }
             });
-            //обновляем состояние
+            //обновляем состояние таблицы
             this.setState({ data: ItemTemplate });
         }
     }, {
@@ -18343,23 +18351,20 @@ var App = function (_React$Component) {
             var _this2 = this;
 
             //create  sorting table
-            var rows = this.state.data.map(function (rowData) {
-                if (rowData.temp == false) {
-                    return _react2.default.createElement(Row, rowData);
-                };
-            });
-            //coздаем массивы выпадающих из фильтра полей
-            var singers = createNewMas(this.state.data.map(function (item, i) {
+            console.log(this.state);
+
+            //coздаем массивы выпадающих из фильтра полей...
+            var singers = createNewMas(this.state.initialstate.map(function (item, i) {
                 return item.singer;
             }));
-            var genres = createNewMas(this.state.data.map(function (item, i) {
+            var genres = createNewMas(this.state.initialstate.map(function (item, i) {
                 return item.genre;
             }));
-            var dates = createNewMas(this.state.data.map(function (item, i) {
+            var dates = createNewMas(this.state.initialstate.map(function (item, i) {
                 return item.date;
             }));
 
-            //сортируем и удалем повторы 
+            //...сортируем эти массивы и удаляем повторы 
             function createNewMas(oldMas) {
                 return oldMas.sort().filter(function (item, pos, ary) {
                     return !pos || item != ary[pos - 1];
@@ -18375,7 +18380,7 @@ var App = function (_React$Component) {
                     );
                 });
             };
-            //отсортированные массивы выпадающих из фильтра полей   
+            //...отсортированные массивы выпадающих из фильтра полей   
 
             var singer = kreateList(singers);
             var genre = kreateList(genres);
@@ -18433,7 +18438,32 @@ var App = function (_React$Component) {
                             _react2.default.createElement(
                                 "div",
                                 { className: "body navbar-dark bg-dark showStyle" },
-                                rows
+                                this.state.pageOfItems.map(function (item) {
+                                    return _react2.default.createElement(
+                                        "div",
+                                        { id: "showRows", key: item.id + 1, className: "row" },
+                                        _react2.default.createElement(
+                                            "div",
+                                            { key: item.id },
+                                            item.singer
+                                        ),
+                                        _react2.default.createElement(
+                                            "div",
+                                            null,
+                                            item.song_name
+                                        ),
+                                        _react2.default.createElement(
+                                            "div",
+                                            null,
+                                            item.genre
+                                        ),
+                                        _react2.default.createElement(
+                                            "div",
+                                            null,
+                                            item.date
+                                        )
+                                    );
+                                })
                             ),
                             _react2.default.createElement(
                                 "div",
@@ -18441,77 +18471,36 @@ var App = function (_React$Component) {
                                 _react2.default.createElement(
                                     "div",
                                     { className: "pagination col-md-7" },
-                                    _react2.default.createElement(
-                                        "div",
-                                        { className: "pagin", onClick: function onClick() {
-                                                return _this2.showList("prev");
-                                            } },
-                                        "prev"
-                                    ),
-                                    _react2.default.createElement(
-                                        "div",
-                                        { className: "pagin", onClick: function onClick() {
-                                                return _this2.showList("List1");
-                                            } },
-                                        "1"
-                                    ),
-                                    _react2.default.createElement(
-                                        "div",
-                                        { className: "pagin", onClick: function onClick() {
-                                                return _this2.showList("List2");
-                                            } },
-                                        "2"
-                                    ),
-                                    _react2.default.createElement(
-                                        "div",
-                                        { className: "pagin", onClick: function onClick() {
-                                                return _this2.showList("List3");
-                                            } },
-                                        "3"
-                                    ),
-                                    _react2.default.createElement(
-                                        "div",
-                                        { className: "pagin", onClick: function onClick() {
-                                                return _this2.showList("List4");
-                                            } },
-                                        "4"
-                                    ),
-                                    _react2.default.createElement(
-                                        "div",
-                                        { className: "pagin", onClick: function onClick() {
-                                                return _this2.showList("next");
-                                            } },
-                                        "next"
-                                    )
+                                    _react2.default.createElement(_Pagination2.default, { items: this.state.data, onChangePage: this.onChangePage, showRows: this.state.showRows })
                                 ),
                                 _react2.default.createElement(
                                     "div",
                                     { className: "showXrow col-md-5" },
                                     _react2.default.createElement(
                                         "div",
-                                        { className: "pagin", onClick: function onClick() {
-                                                return _this2.showXrow("");
+                                        { className: this.state.showRows === 3000 ? 'pagin active' : 'pagin', onClick: function onClick() {
+                                                return _this2.showXrow(3000);
                                             } },
                                         "\u0432\u0441\u0435"
                                     ),
                                     _react2.default.createElement(
                                         "div",
-                                        { className: "pagin", onClick: function onClick() {
-                                                return _this2.showXrow("showfive");
+                                        { className: this.state.showRows === 5 ? 'pagin active' : 'pagin', onClick: function onClick() {
+                                                return _this2.showXrow(5);
                                             } },
                                         "5"
                                     ),
                                     _react2.default.createElement(
                                         "div",
-                                        { className: "pagin", onClick: function onClick() {
-                                                return _this2.showXrow("showten");
+                                        { className: this.state.showRows === 10 ? 'pagin active' : 'pagin', onClick: function onClick() {
+                                                return _this2.showXrow(10);
                                             } },
                                         "10"
                                     ),
                                     _react2.default.createElement(
                                         "div",
-                                        { className: "pagin", onClick: function onClick() {
-                                                return _this2.showXrow("showtwen");
+                                        { className: this.state.showRows === 20 ? 'pagin active' : 'pagin', onClick: function onClick() {
+                                                return _this2.showXrow(20);
                                             } },
                                         "20"
                                     )
@@ -18606,7 +18595,231 @@ var App = function (_React$Component) {
 exports.default = App;
 ;
 
-},{"../Initialstate":27,"./header":29,"react":26,"react-dom":23}],29:[function(require,module,exports){
+},{"../Initialstate":27,"./Pagination":29,"./header":30,"react":26,"react-dom":23}],29:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = require("react-dom");
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+//import PropTypes from 'prop-types';
+
+/*const propTypes = {
+    items: React.PropTypes.array.isRequired,
+    onChangePage: React.PropTypes.func.isRequired,
+    initialPage: React.PropTypes.number    
+}*/
+
+var defaultProps = {
+    initialPage: 1,
+    pageSize: 8
+};
+
+var Pagination = function (_React$Component) {
+    _inherits(Pagination, _React$Component);
+
+    function Pagination(props) {
+        _classCallCheck(this, Pagination);
+
+        var _this = _possibleConstructorReturn(this, (Pagination.__proto__ || Object.getPrototypeOf(Pagination)).call(this, props));
+
+        _this.state = { pager: {} };
+
+        return _this;
+    }
+
+    _createClass(Pagination, [{
+        key: "componentWillMount",
+        value: function componentWillMount() {
+            // set page if items array isn't empty
+            if (this.props.items && this.props.items.length) {
+                this.setPage(this.props.initialPage);
+            }
+        }
+    }, {
+        key: "componentDidUpdate",
+        value: function componentDidUpdate(prevProps, prevState) {
+            // reset page if items array has changed
+            if (this.props.items !== prevProps.items) {
+                this.setPage(this.props.initialPage);
+            }
+        }
+    }, {
+        key: "setPage",
+        value: function setPage(page) {
+            var items = this.props.items;
+
+            var pageSize = this.props.showRows;
+
+            var pager = this.state.pager;
+
+            if (page < 1 || page > pager.totalPages) {
+                return;
+            }
+
+            // get new pager object for specified page
+            pager = this.getPager(items.length, page, pageSize);
+
+            // get new page of items from items array
+            var pageOfItems = items.slice(pager.startIndex, pager.endIndex + 1);
+
+            // update state
+            this.setState({ pager: pager });
+
+            // call change page function in parent component
+            this.props.onChangePage(pageOfItems);
+        }
+    }, {
+        key: "getPager",
+        value: function getPager(totalItems, currentPage, pageSize) {
+            // default to first page
+            currentPage = currentPage || 1;
+
+            // default page size is 10
+            pageSize = pageSize || 10;
+
+            // calculate total pages
+            var totalPages = Math.ceil(totalItems / pageSize);
+
+            var startPage, endPage;
+            if (totalPages <= 10) {
+                // less than 10 total pages so show all
+                startPage = 1;
+                endPage = totalPages;
+            } else {
+                // more than 10 total pages so calculate start and end pages
+                if (currentPage <= 6) {
+                    startPage = 1;
+                    endPage = 10;
+                } else if (currentPage + 4 >= totalPages) {
+                    startPage = totalPages - 9;
+                    endPage = totalPages;
+                } else {
+                    startPage = currentPage - 5;
+                    endPage = currentPage + 4;
+                }
+            }
+
+            // calculate start and end item indexes
+            var startIndex = (currentPage - 1) * pageSize;
+            var endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);
+
+            // create an array of pages to ng-repeat in the pager control
+            var pages = [].concat(_toConsumableArray(Array(endPage + 1 - startPage).keys())).map(function (i) {
+                return startPage + i;
+            });
+
+            // return object with all pager properties required by the view
+            return {
+                totalItems: totalItems,
+                currentPage: currentPage,
+                pageSize: pageSize,
+                totalPages: totalPages,
+                startPage: startPage,
+                endPage: endPage,
+                startIndex: startIndex,
+                endIndex: endIndex,
+                pages: pages
+            };
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            var pager = this.state.pager;
+
+            console.log(this.props);
+            return _react2.default.createElement(
+                "ul",
+                { className: "pagination" },
+                _react2.default.createElement(
+                    "li",
+                    { className: pager.currentPage === 1 ? 'disabled' : '' },
+                    _react2.default.createElement(
+                        "a",
+                        { onClick: function onClick() {
+                                return _this2.setPage(1);
+                            } },
+                        "First"
+                    )
+                ),
+                _react2.default.createElement(
+                    "li",
+                    { className: pager.currentPage === 1 ? 'disabled' : '' },
+                    _react2.default.createElement(
+                        "a",
+                        { onClick: function onClick() {
+                                return _this2.setPage(pager.currentPage - 1);
+                            } },
+                        "Previous"
+                    )
+                ),
+                pager.pages.map(function (page, index) {
+                    return _react2.default.createElement(
+                        "li",
+                        { key: index, className: pager.currentPage === page ? 'active' : '' },
+                        _react2.default.createElement(
+                            "a",
+                            { onClick: function onClick() {
+                                    return _this2.setPage(page);
+                                } },
+                            page
+                        )
+                    );
+                }),
+                _react2.default.createElement(
+                    "li",
+                    { className: pager.currentPage === pager.totalPages ? 'disabled' : '' },
+                    _react2.default.createElement(
+                        "a",
+                        { onClick: function onClick() {
+                                return _this2.setPage(pager.currentPage + 1);
+                            } },
+                        "Next"
+                    )
+                ),
+                _react2.default.createElement(
+                    "li",
+                    { className: pager.currentPage === pager.totalPages ? 'disabled' : '' },
+                    _react2.default.createElement(
+                        "a",
+                        { onClick: function onClick() {
+                                return _this2.setPage(pager.totalPages);
+                            } },
+                        "Last"
+                    )
+                )
+            );
+        }
+    }]);
+
+    return Pagination;
+}(_react2.default.Component);
+
+exports.default = Pagination;
+
+},{"react":26,"react-dom":23}],30:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -18711,16 +18924,6 @@ var Header = function (_React$Component) {
                 )
               )
             )
-          ),
-          _react2.default.createElement(
-            'form',
-            { className: 'form-inline my-2 my-lg-0' },
-            _react2.default.createElement('input', { className: 'form-control mr-sm-2', type: '\u043F\u043E\u0438\u0441\u043A', placeholder: '\u043F\u043E\u0438\u0441\u043A', 'aria-label': 'Search' }),
-            _react2.default.createElement(
-              'button',
-              { className: 'btn btn-outline-success my-2 my-sm-0', type: 'submit' },
-              '\u043F\u043E\u0438\u0441\u043A'
-            )
           )
         )
       );
@@ -18734,7 +18937,7 @@ var Header = function (_React$Component) {
 
 exports.default = Header;
 
-},{"react":26,"react-dom":23}],30:[function(require,module,exports){
+},{"react":26,"react-dom":23}],31:[function(require,module,exports){
 'use strict';
 
 var _react = require('react');
@@ -18755,4 +18958,4 @@ _reactDom2.default.render(_react2.default.createElement(_App2.default, null), do
 
 //Главный компонент
 
-},{"./components/App":28,"react":26,"react-dom":23}]},{},[30]);
+},{"./components/App":28,"react":26,"react-dom":23}]},{},[31]);

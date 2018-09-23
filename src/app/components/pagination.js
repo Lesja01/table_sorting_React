@@ -9,14 +9,14 @@ import ReactDOM from "react-dom";
 }*/
 
 const defaultProps = {
-    initialPage: 1
+    initialPage: 1,
+    pageSize: 8
 }
 
 export default class Pagination extends React.Component {
     constructor(props) {
         super(props);
         this.state = { pager: {} };
-
 
     }
 
@@ -35,16 +35,18 @@ export default class Pagination extends React.Component {
     }
 
     setPage(page) {
-        var items = this.props.items;
+        var { items} = this.props;
+        var  pageSize = this.props.showRows; 
+      
         var pager = this.state.pager;
- let show = this.props.show;
+        
 
         if (page < 1 || page > pager.totalPages) {
             return;
         }
 
         // get new pager object for specified page
-        pager = this.getPager(items.length, page,show);
+        pager = this.getPager(items.length, page, pageSize);
 
         // get new page of items from items array
         var pageOfItems = items.slice(pager.startIndex, pager.endIndex + 1);
@@ -56,13 +58,13 @@ export default class Pagination extends React.Component {
         this.props.onChangePage(pageOfItems);
     }
 
-    getPager(totalItems, currentPage, pageSize, show) {
+    getPager(totalItems, currentPage, pageSize) {
         // default to first page
         currentPage = currentPage || 1;
       
 
         // default page size is 10
-        pageSize = pageSize ||show;
+        pageSize = pageSize||10;
 
         // calculate total pages
         var totalPages = Math.ceil(totalItems / pageSize);
@@ -108,12 +110,8 @@ export default class Pagination extends React.Component {
     }
 
     render() {
-        var pager = this.state.pager;
-
-        if (!pager.pages || pager.pages.length <= 1) {
-            // don't display pager if there is only 1 page
-            return null;
-        }
+        var pager = this.state.pager; 
+              
 console.log(this.props);
         return (
             <ul className="pagination">

@@ -2,39 +2,34 @@ import React from "react";
 import ReactDOM from "react-dom";
 import Initialstate from "../Initialstate";
 import Header from './header' ;
+import Pagination from './Pagination' ;
 
 let Store = Initialstate;//хранилище начальных данных
-
-//create row for table
-const Row = ({id, singer, song_name, genre, date}) => (
-  <div id="showRows" key={id} className={ClassName1+" "+"row"} >    
-    <div key={id}>{singer}</div>
-    <div>{song_name}</div>
-    <div>{genre}</div>    
-    <div>{date}</div>    
-  </div>
-);
-
-let ClassName1 = "";
-
-
-
 
 export default class App extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      data: Store.date,
-        showRows: 0,
-        showLetter: 0
+      data: Store.data,
+      showRows: 10,
+      initialstate: Store.data,
+      exampleItems: Store.data,
+      pageOfItems: []
+
     };
     
     this.compareBy.bind(this);
     this.sortBy.bind(this);
     this.choiceItem.bind(this);
+    this.onChangePage = this.onChangePage.bind(this);
 
   }
+
+onChangePage(pageOfItems) {
+        // update state with new page of items
+        this.setState({ pageOfItems: pageOfItems });
+    }
 
   // сортировкa по алфавиту таблицы
   compareBy(key) {
@@ -52,67 +47,55 @@ export default class App extends React.Component {
   }
 
   showXrow(key){
-    ClassName1 = key; 
-    this.setState({showRows: ClassName1}); 
-  }
+    var Class = key; 
+    this.setState({showRows: Class});
+    //обновляем состояние таблицы    
+    const data = [...this.state.data];
+    this.setState( {data: data} );
+}
 
-// фильтрация
+// фильтрация таблицы:
     choiceItem(choiseGoodTipe) { 
             //записываем переменные значений ссылок
             var rsinger = this.refs.singer.value;
             var rgenre = this.refs.genre.value; 
             var rdate = this.refs.date.value;  
-            let arrayCopy = [...this.state.data];
+            let arrayCopy = this.state.initialstate;
 
-            //создаем фильтр состояния по условиям, меняем видимость элементов
-        let ItemTemplate = arrayCopy.filter(function(elem, index) {  
-            
-                  if (choiseGoodTipe=="singer"&&(rsinger==elem.singer||rsinger=="все") )
-                  { 
-                    elem.temp=false;
-                    return elem
-                    }
-                else if (choiseGoodTipe=="genre"&&(elem.genre==rgenre||rgenre=="все") )
-                    {
-                    elem.temp=false;
-                    return elem                
-                    }
-                else if (choiseGoodTipe=="date"&&(elem.singer==rdate||rdate=="все"))
-                    {
-                    elem.temp=false;
-                    return elem
-                    }
-                    else
-                        {
-                            elem.temp=true;
-                            return elem
-                        }
-                }); 
-             //обновляем состояние
+            //создаем фильтр состояния по условиям
+            let ItemTemplate = arrayCopy.filter(function(elem, index) {  
+                
+                      if (choiseGoodTipe=="singer"&&(elem.singer==rsinger||rsinger=="все") )
+                      { return elem}
+                    else if (choiseGoodTipe=="genre"&&(elem.genre==rgenre||rgenre=="все") )
+                        {return elem}
+                    else if (choiseGoodTipe=="date"&&(elem.date==rdate||rdate=="все"))
+                        {return elem}
+                        else
+                            {return}
+                    }); 
+                 //обновляем состояние таблицы
             this.setState({data: ItemTemplate});   
     }
 
 
   render() {    
-//create  sorting table
-        const rows = this.state.data.map( (rowData) =>{
-                                     if (rowData.temp==false){
-                                        return (
-                                        <Row {...rowData} />)};
-            });
-//coздаем массивы выпадающих из фильтра полей
-        var singers = createNewMas(this.state.data.map((item, i) =>{ 
+        //create  sorting table
+        console.log(this.state);
+
+    //coздаем массивы выпадающих из фильтра полей...
+        var singers = createNewMas(this.state.initialstate.map((item, i) =>{ 
                 return  item.singer;
             })); 
-        var genres = createNewMas(this.state.data.map((item, i) =>{ 
+        var genres = createNewMas(this.state.initialstate.map((item, i) =>{ 
                 return  item.genre;
             })); 
-        var dates = createNewMas(this.state.data.map((item, i) =>{ 
+        var dates = createNewMas(this.state.initialstate.map((item, i) =>{ 
                 return  item.date;
             
          }));    
 
-    //сортируем и удалем повторы 
+    //...сортируем эти массивы и удаляем повторы 
         function createNewMas(oldMas) {       
                 return oldMas.sort().filter(function(item, pos, ary) {
                     return !pos || item != ary[pos - 1];        
@@ -128,7 +111,7 @@ export default class App extends React.Component {
                    )
             }
         )} ;   
-    //отсортированные массивы выпадающих из фильтра полей   
+    //...отсортированные массивы выпадающих из фильтра полей   
 
         let singer = kreateList(singers);
         let genre = kreateList(genres); 
@@ -136,9 +119,8 @@ export default class App extends React.Component {
 
 
     return (
-      <div>
+        <div>
              <Header/>
-
              <div className="container-fluid">
                 <div className="row">
                   <div className="table col-md-8">
@@ -149,24 +131,26 @@ export default class App extends React.Component {
                       <div onClick={() => this.sortBy('genre')}>Жанр  <i className="fa fa-caret-down" aria-hidden="true"></i></div>
                       <div onClick={() => this.sortBy('date')}>Год  <i className="fa fa-caret-down" aria-hidden="true"></i></div>
                     </div>
-                    <div className="body navbar-dark bg-dark showStyle">
-                      {rows}
+                    <div className="body navbar-dark bg-dark showStyle">                      
+                       {this.state.pageOfItems.map(item =>
+                            <div id="showRows" key={item.id+1} className="row">
+                                <div key={item.id}>{item.singer}</div>                            
+                                <div>{item.song_name}</div>
+                                <div>{item.genre}</div>    
+                                <div>{item.date}</div>
+                            </div>
+                        )}
                     </div>
                     <div className="footer row">                        
-                        <div className="pagination col-md-7">                   
-                          <div className="pagin" onClick={()=>this.showList("prev")}>prev</div>
-                          <div className="pagin" onClick={()=>this.showList("List1")}>1</div>
-                          <div className="pagin" onClick={()=>this.showList("List2")}>2</div> 
-                          <div className="pagin" onClick={()=>this.showList("List3")}>3</div>
-                          <div className="pagin" onClick={()=>this.showList("List4")}>4</div>
-                          <div className="pagin" onClick={()=>this.showList("next")}>next</div>                  
+                        <div className="pagination col-md-7">
+                            <Pagination items={this.state.data} onChangePage={this.onChangePage} showRows={this.state.showRows}/>                  
                         </div>
 
                         <div className="showXrow col-md-5"> 
-                           <div className="pagin" onClick={()=>this.showXrow("")}>все</div> 
-                          <div className="pagin" onClick={()=>this.showXrow("showfive")}>5</div>
-                          <div className="pagin" onClick={()=>this.showXrow("showten")}>10</div>
-                          <div className="pagin" onClick={()=>this.showXrow("showtwen")}>20</div>                  
+                            <div className={this.state.showRows === 3000 ? 'pagin active' : 'pagin'} onClick={()=>this.showXrow(3000)}>все</div> 
+                            <div className={this.state.showRows === 5 ? 'pagin active' : 'pagin'} onClick={()=>this.showXrow(5)}>5</div>
+                            <div className={this.state.showRows === 10 ? 'pagin active' : 'pagin'} onClick={()=>this.showXrow(10)}>10</div>
+                            <div className={this.state.showRows === 20 ? 'pagin active' : 'pagin'} onClick={()=>this.showXrow(20)}>20</div>                  
                         </div>
                     </div>
                 </div>
@@ -197,9 +181,9 @@ export default class App extends React.Component {
                                 </div>                        
                             </form>               
                         </div>                       
-                </div>
-              </div>  
-      </div>
+                    </div>
+                </div>  
+             </div>
     );
     
   }
